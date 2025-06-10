@@ -1,0 +1,1 @@
+# wp-performance-debugger-extension
