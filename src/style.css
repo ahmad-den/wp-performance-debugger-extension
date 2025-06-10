@@ -36,16 +36,21 @@
 }
 
 body {
-  width: 580px;
+  width: 600px; /* Reduced from 720px */
   font-family: var(--font-family);
   background-color: var(--background-light);
   color: var(--text-primary);
   line-height: 1.5;
   font-size: 13.5px;
+  height: 600px; /* Changed from min-height to fixed height */
+  overflow: hidden; /* Prevent body scrolling */
 }
 
 .container {
-  padding: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .header {
@@ -59,6 +64,7 @@ body {
   border-top: 4px solid var(--primary-color);
   position: relative;
   box-shadow: var(--shadow-md);
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .header .title-container {
@@ -101,6 +107,7 @@ body {
   border-radius: var(--border-radius-md);
   padding: 3px;
   border: 1px solid var(--primary-color-hover);
+  flex-shrink: 0; /* Prevent tabs from shrinking */
 }
 
 .tab {
@@ -153,6 +160,8 @@ body {
   padding: 16px;
   border: 1px solid var(--border-color-light);
   box-shadow: var(--shadow-sm);
+  overflow-y: auto; /* Make each tab content scrollable */
+  flex: 1; /* Fill available height */
 }
 .content.active {
   display: block;
@@ -160,11 +169,12 @@ body {
 
 .analysis-results {
   margin-top: 0;
+  height: 100%; /* Fill available height */
+  overflow-y: auto; /* Make scrollable */
 }
 
 .scrollable-content {
-  max-height: 280px;
-  overflow-y: auto;
+  overflow-y: visible; /* Change from auto to visible */
   padding-right: 6px;
   margin-right: -6px;
 }
