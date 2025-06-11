@@ -1,6 +1,6 @@
 // Import performance monitoring modules
-import { initializeCLSMonitoring, getCurrentCLSData } from "./performance/cls-monitor.js"
-import { initializeLCPMonitoring, getCurrentLCPData } from "./performance/lcp-monitor.js"
+import { initializeCLSMonitoring, getCurrentCLSData, highlightCLSElement } from "./performance/cls-monitor.js"
+import { initializeLCPMonitoring, getCurrentLCPData, highlightLCPElement } from "./performance/lcp-monitor.js"
 import { initializeINPMonitoring, getCurrentINPData } from "./performance/inp-monitor.js"
 import { initializeAdditionalMetrics, getCurrentAdditionalMetrics } from "./performance/additional-metrics.js"
 
@@ -12,7 +12,6 @@ import { getLoadedAndPreloadedFonts } from "./analyzers/font-analyzer.js"
 import { safeSendMessage } from "../utils/messaging.js"
 
 // Declare chrome variable to avoid undeclared variable error
-const chrome = window.chrome
 
 /**
  * Checks if the extension should run on the current domain
@@ -292,6 +291,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })
   } else if (request.action === "highlightImage") {
     const success = highlightImageOnPage(request.imageUrl)
+    sendResponse({ success })
+  } else if (request.action === "highlightLCPElement") {
+    const success = highlightLCPElement()
+    sendResponse({ success })
+  } else if (request.action === "requestAnalysis") {
+    // Re-run the analysis when requested
+    runAnalysis()
+    sendResponse({ success: true })
+  } else if (request.action === "highlightCLSElement") {
+    const success = highlightCLSElement()
     sendResponse({ success })
   }
   return true

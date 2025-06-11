@@ -9,10 +9,23 @@ import {
   updateUrlWithParameters,
   getTabParameters,
 } from "./parameter-manager.js"
-import { setupMessageHandlers } from "./message-handler.js"
+import { setupMessageHandlers, handleExtensionIconClick } from "./message-handler.js"
+import { handleDetachedWindowClosed, saveWindowBounds, isDetachedWindow } from "./window-manager.js"
+
+// Declare chrome variable
 
 // Set up message handlers
 setupMessageHandlers(chrome)
+
+// Handle extension icon clicks with proper async handling
+chrome.action.onClicked.addListener(async (tab) => {
+  console.log("Extension icon clicked for tab:", tab.id)
+  const handled = await handleExtensionIconClick()
+  console.log("Icon click handled:", handled)
+
+  // If handled is true, we focused a detached window and should prevent default popup
+  // If handled is false, Chrome will show the default popup
+})
 
 // Handle tab removal
 chrome.tabs.onRemoved.addListener((tabId) => {
@@ -41,6 +54,24 @@ chrome.webNavigation.onBeforeNavigate.addListener((details) => {
     } catch (error) {
       // Silent error handling
     }
+  }
+})
+
+// Handle window removal (for detached popup cleanup)
+chrome.windows.onRemoved.addListener(async (windowId) => {
+  // Check if this is our detached window
+  const isOurWindow = await isDetachedWindow(windowId)
+  if (isOurWindow) {
+    console.log("Detached window closed, cleaning up")
+    await handleDetachedWindowClosed()
+  }
+})
+
+// Handle window bounds changes (save position when user moves/resizes)
+chrome.windows.onBoundsChanged.addListener(async (window) => {
+  const isOurWindow = await isDetachedWindow(window.id)
+  if (isOurWindow) {
+    await saveWindowBounds(window.id)
   }
 })
 

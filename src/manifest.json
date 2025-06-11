@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Bigscoots Performance Debugger",
-  "version": "1.0.1",
+  "version": "1.5.0",
   "description": "A comprehensive tool for analyzing website performance metrics including cache headers, CDN status, preloaded fonts and images, and various optimization features. Perfect for debugging BigScoots hosting configurations and performance optimizations.",
   "icons": {
     "16": "icons/icon16.png",
@@ -20,14 +20,11 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
+      "matches": ["<all_urls>"],
       "exclude_matches": [
         "*://portal.bigscoots.com/*",
         "*://wpo-admin.bigscoots.com/*",
@@ -101,20 +98,9 @@
         "*://fonts.googleapis.com/*",
         "*://fonts.gstatic.com/*"
       ],
-      "js": [
-        "content.js"
-      ],
-      "type": "module"
+      "js": ["content.js"]
     }
   ],
-  "permissions": [
-    "storage",
-    "tabs",
-    "activeTab",
-    "webNavigation",
-    "scripting"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ]
+  "permissions": ["storage", "tabs", "activeTab", "webNavigation", "scripting", "windows"],
+  "host_permissions": ["<all_urls>"]
 }

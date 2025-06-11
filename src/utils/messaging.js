@@ -4,7 +4,6 @@
  * @param {Function} callback - Optional callback function
  */
 export function safeSendMessage(message, callback) {
-    const chrome = window.chrome // Declare the chrome variable
     try {
       chrome.runtime.sendMessage(message, (response) => {
         if (chrome.runtime.lastError) {
@@ -25,7 +24,6 @@ export function safeSendMessage(message, callback) {
    * @param {Function} callback - Optional callback function
    */
   export function sendMessageToTab(tabId, message, callback) {
-    const chrome = window.chrome // Declare the chrome variable
     try {
       chrome.tabs.sendMessage(tabId, message, (response) => {
         if (chrome.runtime.lastError) {
@@ -43,7 +41,6 @@ export function safeSendMessage(message, callback) {
    * @param {Object} handlers - Object mapping action names to handler functions
    */
   export function setupMessageListener(handlers) {
-    const chrome = window.chrome // Declare the chrome variable
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const action = message.action
       if (handlers[action]) {

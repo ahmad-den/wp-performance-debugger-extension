@@ -191,5 +191,17 @@ function createImageStatusContainer(image) {
     statusContainer.appendChild(foldSticker)
   }
 
+  // Optimization issues
+  if (image.issues && image.issues.length > 0) {
+    const highSeverityIssues = image.issues.filter((issue) => issue.severity === "high")
+    if (highSeverityIssues.length > 0) {
+      const issueSticker = document.createElement("span")
+      issueSticker.textContent = "NEEDS OPTIMIZATION"
+      issueSticker.className = "status-sticker optimization-issue"
+      issueSticker.title = highSeverityIssues.map((issue) => issue.message).join(", ")
+      statusContainer.appendChild(issueSticker)
+    }
+  }
+
   return statusContainer
 }

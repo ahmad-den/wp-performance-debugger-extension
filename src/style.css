@@ -27,6 +27,23 @@
   --border-radius-md: 10px;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07);
+
+  /* Toast-specific variables */
+  --toast-success-bg: #f0f9f0;
+  --toast-success-border: #34c759;
+  --toast-success-text: #1b5e20;
+
+  --toast-error-bg: #fef7f7;
+  --toast-error-border: #ff3b30;
+  --toast-error-text: #c62828;
+
+  --toast-warning-bg: #fff8f0;
+  --toast-warning-border: #ff9500;
+  --toast-warning-text: #e65100;
+
+  --toast-info-bg: #f0f7ff;
+  --toast-info-border: #007aff;
+  --toast-info-text: #1565c0;
 }
 
 * {
@@ -36,14 +53,42 @@
 }
 
 body {
-  width: 600px; /* Reduced from 720px */
+  width: 600px;
   font-family: var(--font-family);
   background-color: var(--background-light);
   color: var(--text-primary);
   line-height: 1.5;
   font-size: 13.5px;
-  height: 600px; /* Changed from min-height to fixed height */
-  overflow: hidden; /* Prevent body scrolling */
+  height: 600px; /* Default height for popup mode */
+  overflow: hidden;
+}
+
+/* Add these new styles for detached mode */
+body.detached-mode {
+  width: 100%;
+  height: 100vh; /* Use full viewport height in detached mode */
+  max-width: none;
+}
+
+.container.detached-mode {
+  height: 100%;
+}
+
+/* Improve scrolling in detached mode */
+.content.active {
+  display: block;
+  max-height: 100%;
+}
+
+/* Make the content area take full available height in detached mode */
+.detached-mode .content {
+  max-height: calc(100vh - 120px); /* Account for header and tabs */
+}
+
+/* Ensure the insights container can scroll properly in detached mode */
+.detached-mode .insights-container {
+  height: 100%;
+  overflow-y: auto;
 }
 
 .container {
@@ -55,7 +100,7 @@ body {
 
 .header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   margin-bottom: 16px;
   background: linear-gradient(135deg, var(--primary-color-light) 0%, var(--background-content) 80%);
   padding: 16px 18px;
@@ -67,10 +112,17 @@ body {
   flex-shrink: 0; /* Prevent header from shrinking */
 }
 
+.header-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .header .title-container {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
 }
 
 .header .logo {
@@ -98,6 +150,50 @@ body {
   color: var(--text-secondary);
   margin-top: 3px;
   line-height: 1.4;
+}
+
+/* Current URL display */
+.current-url {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  word-break: break-all;
+  line-height: 1.4;
+  display: none; /* Hidden by default, shown when URL is available */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.current-url.visible {
+  display: flex;
+  align-items: center;
+}
+
+.current-url:hover {
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.current-url-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 8px;
+  font-family: var(--font-family);
+  white-space: nowrap;
+}
+
+.current-url-value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
 .tabs {
@@ -175,13 +271,13 @@ body {
 
 .scrollable-content {
   overflow-y: visible; /* Change from auto to visible */
-  padding-right: 6px;
-  margin-right: -6px;
+  padding-right: 12px; /* Increased padding for scrollbar space */
+  margin-right: -12px; /* Negative margin to maintain layout */
 }
 
 .scrollable-content::-webkit-scrollbar,
 .result-list::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 .scrollable-content::-webkit-scrollbar-track,
 .result-list::-webkit-scrollbar-track {
@@ -212,6 +308,7 @@ body {
 .result-list {
   list-style-type: none;
   padding: 0;
+  padding-right: 12px; /* Add padding for scrollbar space */
 }
 
 .empty-state-message {
@@ -286,9 +383,10 @@ body {
   border: 1px solid var(--border-color-light);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   margin-bottom: 10px;
-  padding: 10px 12px;
+  padding: 12px 14px; /* Increased left/right padding */
   display: flex;
   align-items: center;
+  margin-right: 0; /* Remove any right margin that might cause issues */
 }
 .card-style.font-list-item:hover {
   border-color: var(--primary-color-hover);
@@ -296,8 +394,8 @@ body {
 }
 
 .font-list-item-badge {
-  width: 26px;
-  height: 26px;
+  width: 28px; /* Slightly larger */
+  height: 28px; /* Slightly larger */
   border-radius: 50%;
   background-color: var(--primary-color);
   color: white;
@@ -305,8 +403,8 @@ body {
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: 11px;
-  margin-right: 12px;
+  font-size: 12px; /* Slightly larger font */
+  margin-right: 14px; /* Increased margin */
   flex-shrink: 0;
 }
 
@@ -564,14 +662,15 @@ body {
   border: 1px solid var(--border-color-light);
   transition: background-color 0.15s ease;
   cursor: pointer;
+  position: relative;
 }
-.toggle-container:hover:not(.disabled-toggle) {
+.toggle-container:hover:not(.disabled-toggle):not(.processing-current) {
   background-color: #e0e0e0;
 }
 .toggle-container.disabled-toggle {
-  opacity: 0.65;
+  opacity: 0.5;
   cursor: not-allowed;
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
 }
 .toggle-container.disabled-toggle .toggle-label {
   color: var(--text-tertiary);
@@ -581,6 +680,7 @@ body {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-primary);
+  position: relative;
 }
 .toggle-wrapper {
   position: relative;
@@ -629,6 +729,73 @@ body {
 .toggle-input:focus-visible + .toggle-slider {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
+}
+
+/* Professional Processing State - Orange with Animated Dots */
+.toggle-container.processing-current {
+  background-color: rgba(255, 149, 0, 0.08);
+  border-color: var(--warning-bg-strong);
+  cursor: wait;
+}
+
+.toggle-container.processing-current .toggle-label {
+  color: var(--warning-bg-strong);
+  font-weight: 600;
+}
+
+.toggle-container.processing-current .toggle-wrapper {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Processing text with animated dots */
+.toggle-container.processing-current .toggle-label::after {
+  content: " Processing";
+  color: var(--warning-bg-strong);
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Animated dots after "Processing" */
+.toggle-container.processing-current .toggle-label::before {
+  content: "";
+  position: absolute;
+  right: -24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 1em;
+  color: var(--warning-bg-strong);
+  font-weight: 500;
+  font-size: 12px;
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    content: ".";
+  }
+  40% {
+    content: "..";
+  }
+  60%,
+  100% {
+    content: "...";
+  }
+}
+
+/* Ensure processing state overrides other states */
+.toggle-container.processing-current:hover {
+  background-color: rgba(255, 149, 0, 0.08) !important;
+  cursor: wait !important;
+}
+
+/* Disabled toggles during processing */
+.toggle-container.disabled-toggle .toggle-wrapper {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 #adprovider.header-value {
@@ -840,9 +1007,16 @@ body {
 .lcp-element-preview {
   margin-top: 16px;
   padding: 12px;
-  background-color: var(--background-light);
+  background-color: var(--background-content);
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--border-color-light);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.lcp-element-preview:hover {
+  background-color: var(--primary-color-light);
+  border-color: var(--primary-color-hover);
 }
 
 .element-preview-header {
@@ -850,37 +1024,33 @@ body {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-color-light);
+  font-size: 13px;
 }
 
 .element-title {
-  font-size: 12px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .element-tag {
-  font-size: 12px;
   font-weight: 600;
   color: var(--primary-color);
-  background-color: var(--primary-color-light);
-  padding: 2px 6px;
-  border-radius: var(--border-radius-sm);
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
 }
 
 .element-preview-content {
   display: flex;
   gap: 12px;
+  align-items: flex-start;
 }
 
 .element-preview-image {
-  width: 80px;
+  width: 60px;
   height: 60px;
   flex-shrink: 0;
   border-radius: var(--border-radius-sm);
   overflow: hidden;
-  background-color: var(--background-content);
+  background-color: var(--background-light);
   border: 1px solid var(--border-color-light);
   display: flex;
   align-items: center;
@@ -891,6 +1061,16 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.element-preview-img:hover {
+  transform: scale(1.05);
+}
+
+.clickable-preview {
+  cursor: pointer !important;
 }
 
 .preview-placeholder {
@@ -904,27 +1084,51 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .detail-item {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
-  font-size: 11px;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .detail-label {
   font-weight: 600;
-  color: var(--text-secondary);
-  min-width: 60px;
+  color: var(--text-primary);
+  min-width: 70px;
   flex-shrink: 0;
 }
 
 .detail-value {
-  color: var(--text-primary);
+  color: var(--text-secondary);
   word-break: break-all;
   line-height: 1.3;
+}
+
+/* Make source URLs more readable */
+#lcpElementSrc {
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 11px;
+}
+
+/* CLS Element Preview */
+.cls-element-preview {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: var(--background-content);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color-light);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  border-left: 4px solid #ff9500; /* Orange border for CLS */
+}
+
+.cls-element-preview:hover {
+  background-color: rgba(255, 149, 0, 0.05);
+  border-color: #ff9500;
 }
 
 /* Plugin Conflicts */
@@ -1031,4 +1235,88 @@ body {
   padding: 20px;
   color: var(--text-tertiary);
   font-style: italic;
+}
+
+/* Window Controls */
+.window-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.window-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: var(--background-content);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.window-toggle-btn:hover:not(:disabled) {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.window-toggle-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.window-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.window-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.window-toggle-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Adjust header layout for window controls */
+.header .title-container {
+  flex: 1;
+}
+
+/* Section titles */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.section-title svg {
+  width: 16px;
+  height: 16px;
+  color: var(--primary-color);
+}
+
+/* Insights container */
+.insights-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
