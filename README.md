@@ -74,19 +74,21 @@ npm run watch
 
 The extension follows a modular architecture with clear separation of concerns:
 
+### Core Components
+
 \`\`\`
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Background    │◄──►│     Popup       │◄──►│   Content       │
-│  Service Worker │    │   Interface     │    │    Scripts      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ Tab Management  │    │ Display Modules │    │ Performance     │
-│ Window Control  │    │ State Manager   │    │ Monitoring      │
-│ Message Router  │    │ Toggle Controls │    │ Resource Scan   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+Background Service Worker ←→ Popup Interface ←→ Content Scripts
+         ↓                        ↓                    ↓
+   Tab Management          Display Modules        Performance
+   Window Control          State Manager          Monitoring
+   Message Router          Toggle Controls        Resource Scan
 \`\`\`
+
+### Component Relationships
+
+- **Background Service Worker**: Manages extension lifecycle, tab data, and window states
+- **Popup Interface**: Provides user interaction and data visualization
+- **Content Scripts**: Analyzes page performance and resources
 
 ## 📁 File Structure & Dependencies
 
@@ -676,16 +678,22 @@ export function updateNewMetricDisplay(data) {
 3. **`src/popup/displays/new-tab-display.js`** - Create display module
 4. **`src/style.css`** - Add tab-specific styling
 
-### 🔄 **Data Flow Understanding**
+### 🔄 Data Flow Understanding
 
 \`\`\`
-Content Script → Background → Popup
-     ↓              ↓          ↓
-Performance    Tab Storage   Display
-Monitoring   → Parameter  → Components
-Resource     → Management → User Interface
-Analysis     → Messaging  → State Management
+Page Analysis → Background Storage → Popup Display
+     ↓                 ↓                 ↓
+Performance      Tab-Specific       Display
+Monitoring   →   Data Storage   →   Components
+Resource     →   Parameter      →   User Interface
+Analysis     →   Management     →   State Management
 \`\`\`
+
+**Flow Details:**
+1. **Content Scripts** analyze page performance and resources
+2. **Background** stores results per tab and manages parameters  
+3. **Popup** retrieves data and displays in organized tabs
+4. **User Actions** trigger parameter changes via background messaging
 
 ### 🧪 **Testing Scenarios**
 
