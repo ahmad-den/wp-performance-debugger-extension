@@ -74,16 +74,15 @@ npm run watch
 
 The extension follows a modular architecture with clear separation of concerns:
 
-### Core Components
-
-\`\`\`
-Background Service Worker ←→ Popup Interface ←→ Content Scripts
-         ↓                        ↓                    ↓
-   Tab Management          Display Modules        Performance
-   Window Control          State Manager          Monitoring
-   Message Router          Toggle Controls        Resource Scan
-\`\`\`
-
+```ascii
+Background Service Worker  ↔  Popup Interface  ↔  Content Scripts
+           ↓                         ↓                      ↓
+┌─────────────────┐       ┌──────────────────┐    ┌───────────────────┐
+│ Tab Management  │       │ Display Modules  │    │ Performance       │
+│ Window Control  │       │ State Manager    │    │ Monitoring        │
+│ Message Router  │       │ Toggle Controls  │    │ Resource Scan     │
+└─────────────────┘       └──────────────────┘    └───────────────────┘
+```
 ### Component Relationships
 
 - **Background Service Worker**: Manages extension lifecycle, tab data, and window states
