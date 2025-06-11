@@ -714,7 +714,7 @@ Analysis     →   Management     →   State Management
 ## 🚀 Build & Release
 
 ### Development Commands
-\`\`\`bash
+```ascii
 # Development build with source maps
 npm run build:dev
 
@@ -726,10 +726,10 @@ npm run watch
 
 # Bundle analysis
 npm run build:analyze
-\`\`\`
+```
 
 ### Release Commands
-\`\`\`bash
+```ascii
 # Validate extension before release
 npm run validate
 
@@ -740,7 +740,7 @@ npm run release
 npm run version:patch  # 1.0.0 → 1.0.1
 npm run version:minor  # 1.0.0 → 1.1.0
 npm run version:major  # 1.0.0 → 2.0.0
-\`\`\`
+```
 
 ### Release Process
 1. **Development** → `npm run build:dev`
